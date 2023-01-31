@@ -1,20 +1,17 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const ejs = require("ejs");
+// const ejs = require("ejs");
 const mongoose = require("mongoose");
-
+require("dotenv").config();
 const app = express();
-
-app.set("view engine", "ejs");
+// app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
 
 mongoose.set("strictQuery", false);
-mongoose.connect(
-  "mongodb+srv://sayantan:sayantan602741@database.vipdniv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-);
+mongoose.connect(process.env.mongoLink);
 const schema = {
   Title: String,
   Content: String,
@@ -24,7 +21,9 @@ const Articles = mongoose.model(
   new mongoose.Schema({ Title: String, Content: String }),
   "Articles"
 );
-
+app.get("/", function (req, res) {
+  res.redirect("/articles");
+});
 app
   .route("/articles")
   .get(function (req, res) {
@@ -64,7 +63,7 @@ app
     });
   });
 
-///////////////////////////////// GET A PERTICULAR ARTICLE
+///////////////////////////////// GET A PARTICULAR ARTICLE
 app
   .route("/articles/:articleTitle")
   .get(function (req, res) {
@@ -107,7 +106,7 @@ app
     );
   })
   .delete(function (req, res) {
-    Articles.deleteOne({Title : req.params.articleTitle}, function (err) {
+    Articles.deleteOne({ Title: req.params.articleTitle }, function (err) {
       if (!err) res.send("The article deleted");
       else {
         console.log(err.name, err.message);
