@@ -43,16 +43,20 @@ app
     })();
   })
   .post(function (req, res) {
-    const newArtical = new Articles({
-      Title: req.body.Title,
-      Content: req.body.Content,
-    });
-    newArtical.save(function (err) {
-      if (err) console.log(err.name, err.message);
-      else {
-        res.send("Posted");
-      }
-    });
+    if (req.body.Title === undefined || req.body.Content === undefined) {
+      res.send("Please use 'Title' and 'Content'  instead");
+    } else {
+      const newArtical = new Articles({
+        Title: req.body.Title,
+        Content: req.body.Content,
+      });
+      newArtical.save(function (err) {
+        if (err) console.log(err.name, err.message);
+        else {
+          res.send("Posted");
+        }
+      });
+    }
   })
   .delete(function (req, res) {
     Articles.deleteMany({}, function (err) {
